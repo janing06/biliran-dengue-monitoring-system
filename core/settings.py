@@ -24,8 +24,8 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
-# ALLOWED_HOSTS = ["geospatial-data-analysis-of-dengue.onrender.com"]
+ALLOWED_HOSTS = ["bilirandenguemonitoring.onrender.com"]
+
 
 
 # Application definition
