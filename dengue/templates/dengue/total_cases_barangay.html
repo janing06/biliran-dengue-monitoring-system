@@ -1,0 +1,87 @@
+{% extends 'dengue/base.html' %}
+{% block title  %}Barangay Total Cases{% endblock %}
+{% block content %}
+
+
+
+<br>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-3 mb-5">   
+            <div class="card border-0 rounded-0 p-3">
+                <form method="POST">
+                    {% csrf_token %}
+                    <select class="form-select  shadow-sm rounded" name="timeFrameOption">
+                        <option value="">Total</option>
+                        <option value="last_7_days" {{ text }}>Last 7 days</option>
+                    </select>
+                    <br>
+                    <input class="form-control  shadow-sm rounded" name="searched" value="{{ search }}" type="text" placeholder="Search..." aria-label="Search" >
+                    <br>
+                    <center>
+                        <label class="text-secondary text-center">{% if cases_per_barangay.count <= 1 %}<span class="text-danger fw-bold">{{ cases_per_barangay.count }}</span> barangay found{% else %}<span class="text-danger fw-bold">{{ cases_per_barangay.count }}</span> barangays found{% endif %}</label>
+    
+                    </center>
+                    <br>
+                    <button class="btn btn-secondary btn-sm shadow-sm rounded px-3 rounded-4" type="submit"><i class="fa-solid fa-filter me-2"></i> FILTER</button>
+                    
+                </form>
+            </div>
+        </div>
+    
+        <div class="col-md-9">
+            
+            <p class="text-secondary"><span class="text-danger">*NOTE</span>: Forecasting is limited to your respective barangay, accessible only if that barangay belongs to your assigned municipality
+            </p>
+            <div class="table-responsive border rounded shadow-sm">
+                <table class="table table-hover table-sm">
+                    <thead class="text-center align-middle small" >
+                        <tr class="border-bottom border-2 border-dark">
+                            <th scope="col" class="small">MUNICIPAL</th>
+                            <th scope="col" class="small">BARANGAY</th>
+                            <th scope="col" class="small">TOTAL CASES</th>
+                            <!-- <th scope="col" class="small">FORECASTING</th> -->
+                        </tr>
+                    </thead>
+                    <tbody class="text-center align-middle"> 
+                            {% for case in cases_per_barangay%}
+
+                          
+                                    {% if request.user.is_superuser %}
+                                        <tr onclick="rowClick('{{case.resident__barangay__code}}')" style="cursor: pointer;">
+                                        <td class="">{{case.resident__barangay__municipal__municipal}}</td>
+                                        <td class="">{{case.resident__barangay__barangay}}</td>
+                                        <td>{{case.num_cases}}</td>
+                                        <!-- {% if request.user.usermunicipal.municipal|lower == case.resident__barangay__municipal__municipal|lower %}
+                                            <td><a class="btn btn-sm btn-outline-secondary px-4 rounded-4" href="{% url 'forecast' case.resident__barangay__code %}">Show</a></td> 
+                                        {% endif %} -->
+                                    {% else %}
+                                    <tr {% if request.user.usermunicipal.municipal|lower == case.resident__barangay__municipal__municipal|lower %}style="cursor: pointer;" onclick="rowClick('{{case.resident__barangay__code}}')"{% endif %}>
+                                        <td class="">{{case.resident__barangay__municipal__municipal}}</td>
+                                        <td class="">{{case.resident__barangay__barangay}}</td>
+                                        <td>{{case.num_cases}}</td>
+                                    {% endif %}
+                               
+                                        
+                            {% empty %}
+                                <td colspan="4" class="text-secondary">No barangay found</td>     
+                                    </tr>
+                            {% endfor %}
+                    </tbody>
+                </table>   
+            </div>
+             
+        </div>
+    </div>
+</div>
+
+<br><br>
+
+<script>
+    function rowClick(code) {
+        console.log(code.toString())
+        window.location.href = 'http://127.0.0.1:8000/forecast/' + code;
+    
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'dengue/base.html' %}
+{% block title  %}Municipal Total Cases{% endblock %}
+{% block content %}
+
+<div class="container">
+        
+    <div class="row justify-content-center">
+        
+        <div class="col-md-8  mb-3 mt-5">
+            <div class="dropdown mb-2">
+                <form method="post" action="{% url 'total_cases_municipal' %}">
+                     {% csrf_token %}
+                     <button class="btn btn-sm btn-outline-light text-dark border shadow border  dropdown-toggle" style="width:160px" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                          {{text}}
+                     </button>
+                     <ul class="dropdown-menu"  aria-labelledby="dropdownMenuButton1">
+                            <li><button class="dropdown-item" href="{% url 'total_cases_municipal' %}">Total</button></li>
+                            <li><button class="dropdown-item" type="submit" value="7days" name="time_range">Last 7 days</button></li>
+                            <li><button class="dropdown-item" type="submit" value="30days" name="time_range">Last 30 days</button></li>
+                     </ul>
+                </form>
+           </div>
+            
+            <div class="card pt-0 border shadow rounded-2" style="border-radius: 30px;">
+                
+                <table class="table table-hover striped-dark">
+                    <thead class="table text-center small">
+                    <tr class="border-bottom border-2 border-dark">
+                        <th scope="col" class="small">MUNICIPAL</th>
+                        <th scope="col" class="small">TOTAL CASES</th>
+                    </tr>
+                    </thead>
+                    <tbody class="text-dark text-center"> 
+                        {% for case in cases_per_municipal %}
+                            <tr>
+                                <td class="fw-normal">{{ case.resident__municipal__municipal }}</td>
+                                <td class="fw-normal">{{ case.num_cases }}</td>
+                           
+                        {% empty %}
+                                <td colspan="2" class="text-secondary">No municipal found</td>       
+                            </tr>                        
+                        {% endfor %}
+                           
+                    </tbody>
+                </table>  
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}  {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block responsive %}
+
+<!-- Custom favicon -->
+<link rel="shortcut icon" href="{% static '/images/logo.png' %}" />
+
+<!-- Custom fonts using @font-face -->
+<style>
+   @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400&family=Poppins&display=swap');
+
+   * {
+
+      font-family: 'Poppins', sans-serif;
+
+   }
+</style>
+
+<!-- Add any additional stylesheets or custom styling here -->
+{% endblock %}

@@ -1,0 +1,363 @@
+{% extends 'dengue/base.html' %}
+{% load static %}
+{% block title %}Choropleth Map{% endblock %}
+{% block content %}
+
+<style>
+    body {
+        background-color: #ffffff;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    #choromap {
+
+        width: 100%;
+        height: calc(100vh - 86px);
+        background-color: #eeee;
+
+    }
+
+    .info {
+        padding: 15px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+    }
+
+    .info h4 {
+        margin: 0 0 5px;
+        color: #777;
+
+    }
+
+    .dropdown-custom {
+        padding: 10px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+    }
+
+
+    .legend {
+        line-height: 30px;
+        color: #000000;
+        font-size: large;
+        padding: 20px;
+        border-radius: 3px;
+
+    }
+
+    .legend i {
+        width: 18px;
+        height: 25px;
+        float: left;
+        margin-right: 8px;
+        opacity: 0.7;
+        border: 1px solid rgba(0, 0, 0, .1);
+
+    }
+
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .blink {
+        animation: blink 1s infinite;
+    }
+
+    #dropdownMenuButton1 {
+        width: 205px;
+    }
+
+    @media only screen and (max-width: 768px) {
+
+        #dropdownMenuButton1 {
+            width: 150px;
+        }
+
+        .info {
+            width: 200px;
+            padding: 15px;
+
+        }
+
+        .info h4 {
+            font-size: 15px;
+
+        }
+
+        #hover-barangay {
+            font-size: 12px;
+        }
+
+        .legend {
+            width: 150px;
+            font-size: 12px;
+
+
+        }
+    }
+</style>
+
+
+<div class="" id="choromap"></div>
+
+
+<script>
+
+    var maxBounds = L.latLngBounds(
+        L.latLng(11.358607609157232, 123.91744935882099), // Southwest corner
+        L.latLng(11.897821676214718, 125.01560057070333)  // Northeast corner
+    );
+
+    var map = L.map('choromap', {
+        // scrollWheelZoom: false,
+        doubleClickZoom: false,
+        maxZoom: 20,
+        minZoom: 11,
+    }).setView([11.6400, 124.4642], 11).setMaxBounds(maxBounds);
+
+    map.on('dblclick', function (e) {
+        map.setZoom(11);
+    });
+
+    map.removeControl(map.zoomControl);
+    L.control.zoom({
+        position: 'bottomright'
+    }).addTo(map);
+
+    var Light = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+        // attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        attribution: 'Geospatial Data Analysis of Dengue',
+        minZoom: 11,
+        maxZoom: 20,
+
+    }).addTo(map)
+
+    var data = JSON.parse('{{ json_barangay|safe }}');
+
+    console.log(data)
+
+
+    geojson = L.geoJson(data, {
+        style: style,
+        onEachFeature: onEachFeature
+    }).addTo(map);
+
+
+
+    function getColor(d) {
+        const total_7 = '{{total_7}}'
+        const total_30 = '{{total_30}}'
+        const total_all = '{{total_all}}'
+        if (total_all != '') {
+            return d > 1000 ? '#990000' :
+                d > 500 ? '#d7301f' :
+                    d > 200 ? '#ef6548' :
+                        d > 100 ? '#fc8d59' :
+                            d > 50 ? '#fdbb84' :
+                                d > 10 ? '#fdd49e' :
+                                    d > 0 ? '#fee8c8' :
+                                        '#fff7ec';
+        } else if (total_30 != '') {
+            return d > 1000 ? '#990000' :
+                d > 500 ? '#d7301f' :
+                    d > 200 ? '#ef6548' :
+                        d > 100 ? '#fc8d59' :
+                            d > 50 ? '#fdbb84' :
+                                d > 10 ? '#fdd49e' :
+                                    d > 0 ? '#fee8c8' :
+                                        '#fff7ec';
+        } else {
+            return d > 10 ? '#b10026' :
+                d > 6 ? '#e31a1c' :
+                    d > 5 ? '#fc4e2a' :
+                        d > 3 ? '#fd8d3c' :
+                            d > 2 ? '#feb24c' :
+                                d > 1 ? '#fed976' :
+                                    d > 0 ? '#ffffb2' :
+                                        '#fff7ec';
+        }
+
+    }
+
+
+
+
+    function style(feature) {
+        return {
+            fillColor: getColor(feature.properties.num_cases),
+            weight: .5,
+            opacity: 1,
+            color: '#666',
+            //dashArray: '2',
+            fillOpacity: .6,
+
+        };
+    }
+
+    function highlightFeature(e) {
+
+        var layer = e.target;
+
+        layer.setStyle({
+            weight: 3,
+            color: '#6c757d',
+            //dashArray: '3',
+            fillOpacity: 0.8
+        });
+
+        layer.bringToFront();
+        info.update(layer.feature.properties);
+    }
+
+    function resetHighlight(e) {
+
+        geojson.resetStyle(e.target);
+        info.update();
+    }
+
+    function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+
+
+
+    }
+
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeature
+        });
+    }
+
+    var info = L.control();
+
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    };
+
+    // method that we will use to update the control based on feature properties passed
+    info.update = function (props) {
+
+        const total_7 = '{{total_7}}'
+        const total_30 = '{{total_30}}'
+        const total_all = '{{total_all}}'
+        this._div.innerHTML = (props ?
+            '<b><h4 class="text-center  fw-bold">' + props.barangay + ', ' + props.municipal + '</h4><br></b><p class="text-danger text-center"style="font-size: 18px;"><span class="fw-bold">' + props.num_cases +
+            '</span> <span class="text-secondary">confirmed cases</span></p>' +
+            (total_7 ? (props.num_cases >= 6 ? '<h3 class="text-danger text-center fw-bold blink">Dengue Outbreak Alert!</h3><br><p class="text-center text-secondary   ">Please take action immediately!</p>' : (props.num_cases >= 3 ? '<h3 class="text-warning text-center fw-bold">Possible Outbreak</i></h3><br><p class="text-center text-secondary   ">Please take action to prevent the disease from spreading further.</p>' : ''))
+                : total_30 ? (props.num_cases >= 10 ? '<h3 class="text-danger text-center blink">Warning! Outbreak!</h3>' : '')
+                    : '')
+            : '<span class="text-center text-secondary" id="hover-barangay" ">Hover over a barangay</span>');
+    }
+
+    info.addTo(map);
+
+    var legend = L.control({ position: 'bottomleft' });
+    legend.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'info legend');
+        const total_7 = '{{total_7}}'
+        const total_30 = '{{total_30}}'
+        const total_all = '{{total_all}}'
+        if (total_7 != '') {
+            div.innerHTML += '<center>Cases</span></center>' +
+                '<i style="background:#b10026"></i> 10+<br>' +
+                '<i style="background:#e31a1c"></i> 6<br>' +
+                '<i style="background:#fc4e2a"></i> 5<br>' +
+                '<i style="background:#fd8d3c"></i> 4<br>' +
+                '<i style="background:#feb24c"></i> 3<br>' +
+                '<i style="background:#fed976"></i> 2<br>' +
+                '<i style="background:#ffffb2"></i> 1<br>' +
+                '<i style="background:#fff7ec"></i> 0<br>';
+
+            return div;
+        } else {
+            div.innerHTML += '<center>Cases</span></center>' +
+                '<i style="background:#990000"></i> 1000+<br>' +
+                '<i style="background:#d7301f"></i> 501&ndash;1000<br>' +
+                '<i style="background:#ef6548"></i> 201&ndash;500<br>' +
+                '<i style="background:#fc8d59"></i> 101&ndash;200<br>' +
+                '<i style="background:#fdbb84"></i> 51&ndash;100<br>' +
+                '<i style="background:#fdd49e"></i> 11&ndash;50<br>' +
+                '<i style="background:#fee8c8"></i> 1&ndash;10<br>' +
+                '<i style="background:#fff7ec"></i> 0<br>';
+
+            return div;
+        }
+
+    };
+
+    legend.addTo(map);
+
+    var dropdown = L.control({ position: 'topleft' });
+
+    dropdown.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'dropdown-custom');
+        div.innerHTML = `
+               <div class="dropdown">
+                    <form method="POST" action="">
+                         {% csrf_token %}
+                         <center>
+                            <button class="btn btn-outline-light text-dark border-dark dropdown-toggle rounded-1" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{text}}
+                            </button>
+                            <ul class="dropdown-menu" style="width:205px" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item text-dark" href="{% url 'choropleth' %}">Total</a></li>
+                                    <li><button class="dropdown-item" type="submit" value="7days" name="time_range">Last 7 days</button></li>
+                            </ul>
+                        </center>
+                       
+                    </form>
+               </div>
+
+               <div class="mt-5">
+                {% if total_all %}
+                
+                    <p class="text-dark text-center fw-bolder fs-3">{{total_all}}<br><span id="label-cases" class="text-secondary" style="font-size:15px;font-weight:500;">cumulative cases</span></p>
+                
+                {% endif %}
+                {% if total_7 %}
+                
+                    <p class="text-dark text-center fw-bolder fs-3">{{total_7}}<br><span id="label-cases" class="text-secondary" style="font-size:15px;font-weight:500;">new cases last 7 days</span></p>
+                   
+                {% endif %}
+                {% if total_30 %}
+                
+                    <p class="text-dark text-center fw-bolder fs-3">{{total_30}}<br><span id="label-cases" class="text-secondary" style="font-size:15px;font-weight:100;">new cases last 30 days</span></p>
+                
+                {% endif %}
+               </div>
+          `;
+
+        return div;
+    };
+
+    dropdown.addTo(map);
+
+
+</script>
+
+{% endblock %}

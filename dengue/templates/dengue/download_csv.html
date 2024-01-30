@@ -1,0 +1,142 @@
+{% extends 'dengue/base.html' %} {% block title %}Download Excel{% endblock %}
+{% block content %}
+
+<style>
+   .parent {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+   }
+</style>
+
+<div class="parent">
+   <div class="card shadow p-4 px-5 rounded">
+      <form method="GET" action="" id="downloadForm" target="_blank">
+         <label for="municipal">Select Municipal</label>
+         <select class="form-select animate-up" name="municipal" id="municipal">
+            <option value="All">All</option>
+            {% for municipal in municipals %}
+            <option value="{{ municipal.code }}">
+               {{ municipal.municipal }}
+            </option>
+            {% endfor %}
+         </select>
+         <label for="barangay">Select Barangay</label>
+         <select class="form-select animate-up" name="barangay" id="barangay">
+            <option value="All">All</option>
+         </select>
+         <br />
+         <div class="input-group">
+            <div
+               class="input-group-text bg-white text-dark justify-content-center"
+               style="width: 60px; font-size: 12px"
+            >
+               Start
+            </div>
+            <input
+               class="form-control"
+               required
+               type="date"
+               name="fromDate"
+               id="fromDate"
+               value="{{ fromDate }}"
+            />
+         </div>
+         <br />
+         <div class="input-group">
+            <div
+               class="input-group-text bg-white text-dark justify-content-center"
+               style="width: 60px; font-size: 12px"
+            >
+               End
+            </div>
+            <input
+               class="form-control"
+               required
+               type="date"
+               name="toDate"
+               id="toDate"
+               value="{{ toDate }}"
+            />
+         </div>
+         <br />
+         <center>
+            <button
+               class="btn btn-sm btn-success px-3 rounded-4"
+               type="button"
+               onclick="setAction('excel')"
+            >
+               <i class="fa-solid fa-download me-2"></i>Download Excel
+            </button>
+            <button
+               class="btn btn-sm btn-danger px-3 rounded-4"
+               type="button"
+               onclick="setAction('pdf')"
+            >
+               <i class="fa-solid fa-download me-2"></i>Download PDF
+            </button>
+         </center>
+
+         {% if messages %} {% for message in messages %}
+         <div class="alert alert-danger text-center p-1 mt-4" role="alert">
+            {{ message }}
+         </div>
+         {% endfor %} {% endif %}
+      </form>
+   </div>
+</div>
+
+<script>
+   function setAction(actionType) {
+      var form = document.getElementById('downloadForm');
+
+      console.log(actionType);
+      if (actionType === 'excel') {
+         console.log('download excel');
+         form.action = "{% url 'cases_csv' %}";
+      } else if (actionType === 'pdf') {
+         form.action = "{% url 'render_to_pdf' %}";
+         console.log('download pdf');
+      }
+      form.submit();
+   }
+
+   function hideAlert() {
+      var alertElement = document.querySelector('.alert');
+      alertElement.style.display = 'none';
+   }
+   setTimeout(hideAlert, 2000);
+
+   const barangay = document.getElementById('barangay');
+   const municipal = document.getElementById('municipal');
+
+   municipal.addEventListener('change', loadBarangay);
+
+   function loadBarangay() {
+      var xhr = new XMLHttpRequest();
+      selected_municipal = municipal.value;
+      xhr.open('GET', `/barangay_api/${selected_municipal}`, true);
+
+      xhr.onload = function () {
+         if (this.status == 200) {
+            jsonData = JSON.parse(this.responseText);
+
+            barangay.innerHTML = '';
+            barangay.innerHTML = '<option value="All">All</option>';
+
+            jsonData.forEach((data) => {
+               const option = document.createElement('option');
+               option.value = data.code;
+               option.textContent = data.barangay;
+               barangay.appendChild(option);
+            });
+         }
+      };
+      xhr.send();
+   }
+
+   loadBarangay();
+</script>
+
+{% endblock %}

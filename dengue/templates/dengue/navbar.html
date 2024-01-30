@@ -1,0 +1,165 @@
+{% load static %}
+
+<style>
+   .hover-effect:hover {
+      color: #cf4141;
+   }
+   .active_url {
+      border-bottom: 3px solid #d69292;
+      color: #cf4141 !important;
+   }
+
+   .dropdown:hover .hover-dropdown {
+      display: block;
+      border-radius: 0;
+   }
+   .link {
+      font-size: 12px;
+      font-weight: bold;
+      color: #696969;
+   }
+   .navbar-nav a.nav-link {
+      color: #4e4e4e; /* Change to your desired color code */
+   }
+   .navbar-nav a.nav-link:hover {
+      color: #cf4141; /* Change to your desired color code */
+   }
+</style>
+
+<nav class="navbar navbar-expand-lg  bg-white navbar-light fixed-top border-bottom">
+   <div class="container">
+      <a class="navbar-brand m-0" href="{% url 'home' %}">
+         <img src="{% static 'images/logo.png' %}" width="60px" />
+         <span
+            class="text-danger fs-3 opacity-75 fw-bold align-middle d-none d-md-inline"
+            style="
+               font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial,
+                  sans-serif;
+            "
+            >Biliran Denguevirus (DENV)</span
+         >
+      </a>
+      <button
+         class="navbar-toggler border-0"
+         type="button"
+         data-bs-toggle="collapse"
+         data-bs-target="#navbarSupportedContent"
+         aria-controls="navbarSupportedContent"
+         aria-expanded="false"
+         aria-label="Toggle navigation"
+      >
+         <span class="navbar-toggler-icon border-0"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+         <div
+            class="navbar-nav {% if not user.superuser %}ms-auto{% else %}mx-auto{% endif %} small fw-bold"
+         >
+            <li>
+               <a
+                  class="nav-link hover-effect {% if request.path == '/' %}active_url{% endif %}"
+                  href="{% url 'home' %}"
+                  >OVERVIEW</a
+               >
+            </li>
+            <li>
+               <a
+                  class="nav-link hover-effect {% if request.path == '/choropleth/' %}active_url{% endif %}"
+                  href="{% url 'choropleth' %}"
+                  >CHOROPLETH MAP</a
+               >
+            </li>
+
+            {% if user.is_authenticated %} {% if user.is_staff %}
+            <!-- <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle hover-effect {% if request.path == '/total_cases_municipal/' or request.path == '/total_cases_barangay/' or '/forecast/' in request.path %}active_url{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  TABLES
+                </a>
+                <ul class="dropdown-menu hover-dropdown">
+                  <li><a class="dropdown-item hover-effect small link" href="{% url 'total_cases_municipal' %}">MUNICIPAL (Total)</a></li>
+                  <li><a class="dropdown-item hover-effect small link" href="{% url 'total_cases_barangay' %}">BARANGAY (Forecasting)</a></li>
+                </ul>
+              </li> -->
+
+            <li>
+               <a
+                  class="nav-link hover-effect {% if request.path == '/total_cases_barangay/' %}active_url{% endif %}"
+                  href="{% url 'total_cases_barangay' %}"
+                  >FORECAST</a
+               >
+            </li>
+
+            {% endif %} {% if user.is_superuser %}
+
+            <li>
+               <a
+                  class="nav-link hover-effect {% if request.path == '/data_tables/' or request.path == '/download_csv/' %}active_url{% endif %}"
+                  href="{% url 'download_csv' %}"
+                  >DOWNLOAD</a
+               >
+            </li>
+            <!-- <li class="nav-item dropdown">
+               <a
+                  class="nav-link dropdown-toggle hover-effect {% if request.path == '/data_tables/' or request.path == '/download_csv/' %}active_url{% endif %}"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+               >
+                  RECORDS
+               </a>
+               <ul class="dropdown-menu hover-dropdown">
+                  <li>
+                     <a
+                        class="dropdown-item hover-effect small link"
+                        href="{% url 'data_tables' %}"
+                        >ALL RECORD</a
+                     >
+                  </li>
+                  <li>
+                     <a
+                        class="dropdown-item hover-effect small link"
+                        href="{% url 'download_csv' %}"
+                        >DOWNLOAD EXCEL</a
+                     >
+                  </li>
+               </ul>
+            </li> -->
+            {% endif %}
+         </div>
+         <div class="navbar-nav ms-auto small fw-bold">
+            <!-- <li><a class="nav-link btn btn-danger text-white rounded-5" href="{% url 'download_csv' %}">DASHBOARD</a></li>
+            <li><a class="nav-link btn btn-danger text-white rounded-5" href="{% url 'download_csv' %}">LOGOUT</a></li> -->
+
+            <li class="nav-item dropdown">
+               <a
+                  class="nav-link dropdown-toggle hover-effect d-flex align-items-center"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+               >
+                  <i class="fa-solid fa-user me-2" style="font-size: 12px"></i
+                  >{{user.username|upper}}
+               </a>
+               <ul class="dropdown-menu hover-dropdown">
+                  <li>
+                     <a
+                        class="dropdown-item hover-effect small link"
+                        href="{% url 'admin:index' %}"
+                        >DASHBOARD</a
+                     >
+                  </li>
+                  <li>
+                     <a
+                        class="dropdown-item hover-effect small link"
+                        href="{% url 'admin:logout' %}"
+                        >SIGNOUT</a
+                     >
+                  </li>
+               </ul>
+            </li>
+         </div>
+         {% endif%}
+      </div>
+   </div>
+</nav>
