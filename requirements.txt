@@ -11,7 +11,7 @@ Cython==3.0.8
 defusedxml==0.7.1
 diff-match-patch==20230430
 dj-user-login-history==1.0.5
-Django==5.0.1
+Django==4.2.7
 django-admin-rangefilter==0.12.0
 django-humanize==0.1.2
 django-import-export==3.3.3
