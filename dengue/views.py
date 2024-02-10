@@ -848,7 +848,7 @@ def home(request):
 
                 data_month = json.dumps(result_month)
 
-                cases_per_municipal = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(resident__municipal__municipal=selected_municipal).filter(date__gte=start_date, date__lt=end_date).values('resident__municipal__id', 'resident__municipal__municipal').annotate(num_cases=Count('id')).order_by('resident__municipal__municipal')
+                cases_per_municipal = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(resident__municipal__municipal=selected_municipal).filter(date__gte=start_date, date__lt=end_date).values('resident__municipal__id', 'resident__municipal__municipal').annotate(num_cases=Count('id')).order_by('-num_cases')
 
                 cases_per_barangay = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(resident__municipal__municipal=selected_municipal).filter(date__gte=start_date, date__lt=end_date).values('resident__barangay__id', 'resident__barangay__barangay','resident__barangay__code','resident__barangay__municipal__municipal').annotate(num_cases=Count('id')).order_by('resident__barangay__municipal__municipal')
             
@@ -876,7 +876,7 @@ def home(request):
 
                 data_month = json.dumps(result_month)
 
-                cases_per_municipal = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(date__gte=start_date, date__lt=end_date).values('resident__municipal__id', 'resident__municipal__municipal').annotate(num_cases=Count('id')).order_by('resident__municipal__municipal')
+                cases_per_municipal = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(date__gte=start_date, date__lt=end_date).values('resident__municipal__id', 'resident__municipal__municipal').annotate(num_cases=Count('id')).order_by('-num_cases')
 
                 cases_per_barangay = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(date__gte=start_date, date__lt=end_date).values('resident__barangay__id', 'resident__barangay__barangay','resident__barangay__code','resident__barangay__municipal__municipal').annotate(num_cases=Count('id')).order_by('resident__barangay__municipal__municipal')
 
@@ -1003,7 +1003,7 @@ def home(request):
         data_month = json.dumps(result_month)
 
 
-        cases_per_municipal = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(date__gte=startofYear, date__lte=currentDate).values('resident__municipal__id', 'resident__municipal__municipal').annotate(num_cases=Count('id')).order_by('resident__municipal__municipal')
+        cases_per_municipal = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(date__gte=startofYear, date__lte=currentDate).values('resident__municipal__id', 'resident__municipal__municipal').annotate(num_cases=Count('id')).order_by('-num_cases')
 
         cases_per_barangay = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(date__gte=startofYear, date__lte=currentDate).values('resident__barangay__id', 'resident__barangay__barangay','resident__barangay__code','resident__barangay__municipal__municipal').annotate(num_cases=Count('id')).order_by('resident__barangay__municipal__municipal')
 
