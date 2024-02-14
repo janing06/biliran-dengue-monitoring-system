@@ -67,3 +67,4 @@ whitenoise
 python-decouple
 django-semantic-admin
 django-admin-rangefilter==0.12.0
+django-cors-headers
