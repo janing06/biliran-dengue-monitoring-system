@@ -80,14 +80,14 @@ def render_to_pdf(request):
 
     
     if selected_municipal == 'All':
-            cases = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(date__gte=start_date, date__lte=end_date).order_by('-date')
+            # cases = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(date__gte=start_date, date__lte=end_date).order_by('-date')
 
             data_day = Case.objects.prefetch_related('resident','resident__barangay','resident__municipal').filter(date__gte=start_date, date__lte=end_date).annotate(date_only=TruncDate('date')).values('date_only').annotate(total_cases=Count('id')).order_by('date_only')
             data_week = Case.objects.prefetch_related('resident','resident__barangay','resident__municipal').filter(date__gte=start_date, date__lte=end_date).annotate(date_only=TruncWeek('date')).values('date_only').annotate(total_cases=Count('id')).order_by('date_only')
             data_month = Case.objects.prefetch_related('resident','resident__barangay','resident__municipal').filter(date__gte=start_date, date__lte=end_date).annotate(date_only=TruncMonth('date')).values('date_only').annotate(total_cases=Count('id')).order_by('date_only')
 
             context = {
-                'cases': cases,
+                # 'cases': cases,
                 'fromDate': fromDate,
                 'toDate': toDate,
                 'selected_municipal': selected_municipal,
@@ -100,7 +100,7 @@ def render_to_pdf(request):
             }
     else:
         if selected_barangay == 'All':
-            cases = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(resident__municipal__code=selected_municipal).filter(date__gte=start_date, date__lte=end_date).order_by('-date')
+            # cases = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(resident__municipal__code=selected_municipal).filter(date__gte=start_date, date__lte=end_date).order_by('-date')
             municipal = Municipal.objects.get(code=selected_municipal)
 
             data_day = Case.objects.prefetch_related('resident','resident__barangay','resident__municipal').filter(resident__municipal__code=selected_municipal).filter(date__gte=start_date, date__lte=end_date).annotate(date_only=TruncDate('date')).values('date_only').annotate(total_cases=Count('id')).order_by('date_only')
@@ -109,7 +109,7 @@ def render_to_pdf(request):
 
 
             context = {
-                'cases': cases,
+                # 'cases': cases,
                 'fromDate': fromDate,
                 'toDate': toDate,
                 'selected_municipal': selected_municipal,
@@ -122,7 +122,7 @@ def render_to_pdf(request):
                 
             }
         else:
-            cases = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(resident__barangay__code=selected_barangay).filter(date__gte=start_date, date__lte=end_date).order_by('-date')
+            # cases = Case.objects.prefetch_related('resident', 'resident__barangay', 'resident__municipal').filter(resident__barangay__code=selected_barangay).filter(date__gte=start_date, date__lte=end_date).order_by('-date')
             municipal = Municipal.objects.get(code=selected_municipal)
             barangay = Barangay.objects.get(code=selected_barangay)
 
@@ -132,7 +132,7 @@ def render_to_pdf(request):
 
 
             context = {
-                'cases': cases,
+                # 'cases': cases,
                 'fromDate': fromDate,
                 'toDate': toDate,
                 'selected_municipal': selected_municipal,
