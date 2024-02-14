@@ -66,6 +66,7 @@ ROOT_URLCONF = 'core.urls'
 
 CORS_ALLOWED_ORIGINS = [
     'https://bilirandenguemonitoring.2.sg-1.fl0.io',
+    'https://bilirandenguemonitoring.onrender.com',
     # Add more allowed origins if needed
 ]
 
