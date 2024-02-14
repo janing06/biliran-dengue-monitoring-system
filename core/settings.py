@@ -125,6 +125,8 @@ USE_I18N = True
 USE_TZ = False
 
 
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'Strict'
 
 
 
