@@ -28,6 +28,7 @@ ALLOWED_HOSTS = ["bilirandenguemonitoring.onrender.com", "biliran-dengue-monitor
 
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
