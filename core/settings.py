@@ -47,12 +47,14 @@ INSTALLED_APPS = [
     'login_history',
     'django.contrib.humanize',
      'rangefilter',
+     'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -61,6 +63,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'core.urls'
+
+CORS_ALLOWED_ORIGINS = [
+    'https://bilirandenguemonitoring.2.sg-1.fl0.io',
+    # Add more allowed origins if needed
+]
 
 TEMPLATES = [
     {
