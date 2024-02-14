@@ -70,6 +70,11 @@ CORS_ALLOWED_ORIGINS = [
     # Add more allowed origins if needed
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://bilirandenguemonitoring.2.sg-1.fl0.io',
+    'https://bilirandenguemonitoring.onrender.com',
+]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
